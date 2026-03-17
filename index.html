@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奶茶星球 Milk Tea Planet</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Nunito:wght@400;600;700;800&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --milk-tea: #F5E6D3;
+  --milk-tea-deep: #E8D5BE;
+  --brown: #C4A882;
+  --brown-dark: #A68B6B;
+  --pink: #F2D7D9;
+  --pink-deep: #E8B4B8;
+  --cream: #FFF8F0;
+  --text: #5D4E37;
+  --text-light: #8B7355;
+  --grape: #9B6BA3;
+  --grape-light: #D4B5DC;
+  --grape-bg: #F3E8F5;
+  --red-gold: #C4463A;
+  --gold: #D4A853;
+  --red-gold-bg: #FAE8E6;
+  --cha-yan: #C4956A;
+  --cha-yan-pink: #D4A08A;
+  --cha-yan-bg: #F5EAE0;
+  --jasmine: #7BAE7F;
+  --jasmine-light: #B8D9BA;
+  --jasmine-bg: #EDF5EE;
+  --mixue-red: #E23D3D;
+  --mixue-yellow: #F5D547;
+  --mixue-bg: #FFF0F0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Nunito', 'ZCOOL KuaiLe', sans-serif;
+  background: linear-gradient(170deg, var(--cream) 0%, var(--milk-tea) 50%, var(--pink) 100%);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* ============ APP LAYOUT ============ */
+#app {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ============ LEFT PANEL ============ */
+.left-panel {
+  width: 360px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  border-right: 1px solid rgba(196, 168, 130, 0.15);
+  overflow-y: auto;
+  gap: 20px;
+}
+
+.left-panel::-webkit-scrollbar { width: 3px; }
+.left-panel::-webkit-scrollbar-thumb { background: var(--brown); border-radius: 3px; opacity: 0.3; }
+
+/* Planet (compact) */
+.planet-section {
+  text-align: center;
+  cursor: pointer;
+}
+
+.planet-section h1 {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 22px;
+  color: var(--brown-dark);
+  letter-spacing: 2px;
+}
+
+.planet-section .subtitle {
+  font-size: 11px;
+  color: var(--text-light);
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+.planet-wrap {
+  width: 160px;
+  height: 160px;
+  margin: 12px auto 0;
+  animation: float 4s ease-in-out infinite;
+  transition: transform 0.3s;
+}
+
+.planet-wrap:hover { transform: scale(1.05); }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.planet-body { fill: var(--milk-tea); stroke: var(--brown); stroke-width: 1.5; }
+.planet-surface { fill: none; stroke: var(--brown); stroke-width: 0.8; opacity: 0.2; }
+
+.brand-element {
+  opacity: 0.15;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.brand-element.collected { opacity: 1; }
+.brand-element.just-collected { animation: pop-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+@keyframes pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.celebration-star {
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--gold);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: star-burst 1s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes star-burst {
+  0% { transform: scale(0) rotate(0); opacity: 1; }
+  100% { transform: scale(1.5) rotate(180deg) translateY(-40px); opacity: 0; }
+}
+
+/* ============ CALENDAR ============ */
+.calendar-section {
+  background: rgba(255,255,255,0.45);
+  border-radius: 18px;
+  padding: 16px;
+  border: 1.5px solid rgba(196,168,130,0.12);
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.cal-header h3 {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 15px;
+  color: var(--brown-dark);
+}
+
+.cal-nav {
+  display: flex;
+  gap: 6px;
+}
+
+.cal-nav button {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(196,168,130,0.2);
+  background: white;
+  color: var(--text-light);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.cal-nav button:hover { background: var(--milk-tea); }
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-light);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--text-light);
+  position: relative;
+  cursor: default;
+  transition: all 0.15s;
+}
+
+.cal-day.today {
+  background: rgba(196,168,130,0.15);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.cal-day.has-tea {
+  cursor: pointer;
+}
+
+.cal-day.has-tea:hover {
+  background: rgba(196,168,130,0.12);
+  transform: scale(1.1);
+}
+
+.cal-day .cal-sticker {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.cal-day .cal-sticker svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cal-day.empty { visibility: hidden; }
+
+/* ============ REPORT BUTTON ============ */
+.report-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.report-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(196,168,130,0.2);
+  background: rgba(255,255,255,0.5);
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 13px;
+  color: var(--brown-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.report-btn:hover {
+  background: white;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(93,78,55,0.08);
+}
+
+/* ============ RIGHT PANEL ============ */
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.journal-header {
+  flex-shrink: 0;
+  padding: 20px 32px 14px;
+  border-bottom: 1px solid rgba(196,168,130,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.journal-header h2 {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 18px;
+  color: var(--brown-dark);
+}
+
+.journal-header .tea-count {
+  font-size: 12px;
+  color: var(--text-light);
+  background: rgba(196,168,130,0.12);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* ============ JOURNAL AREA ============ */
+.journal-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 32px;
+  scroll-behavior: smooth;
+}
+
+.journal-area::-webkit-scrollbar { width: 3px; }
+.journal-area::-webkit-scrollbar-thumb { background: var(--brown); border-radius: 3px; }
+
+/* Welcome */
+.welcome-msg {
+  text-align: center;
+  padding: 40px 20px;
+  animation: fade-up 0.6s ease-out;
+}
+
+.welcome-msg .emoji { font-size: 48px; margin-bottom: 12px; }
+.welcome-msg p { font-size: 14px; color: var(--text-light); line-height: 2; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ JOURNAL ENTRY (手账风格) ============ */
+.journal-entry {
+  margin-bottom: 24px;
+  animation: entry-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes entry-appear {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Date divider */
+.journal-date-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
+
+.journal-date-divider .date-tag {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 13px;
+  color: var(--brown-dark);
+  background: rgba(255,255,255,0.6);
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px dashed var(--brown);
+  white-space: nowrap;
+}
+
+.journal-date-divider .date-line {
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--brown) 0, var(--brown) 4px, transparent 4px, transparent 8px);
+  opacity: 0.25;
+}
+
+/* User input line */
+.journal-user-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.journal-user-line .user-avatar {
+  width: 24px;
+  height: 24px;
+  background: var(--brown);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* 手账 card */
+.journal-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 2px 16px rgba(93,78,55,0.06);
+  border: 1.5px solid rgba(196,168,130,0.12);
+  overflow: hidden;
+}
+
+/* Washi tape decoration */
+.journal-card::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 30px;
+  width: 60px;
+  height: 20px;
+  border-radius: 2px;
+  opacity: 0.6;
+  transform: rotate(-2deg);
+}
+
+.journal-card[data-brand="喜茶"]::before { background: var(--grape-light); }
+.journal-card[data-brand="霸王茶姬"]::before { background: #F0C4BF; }
+.journal-card[data-brand="茶颜悦色"]::before { background: #E0CDB8; }
+.journal-card[data-brand="茉莉奶白"]::before { background: var(--jasmine-light); }
+.journal-card[data-brand="蜜雪冰城"]::before { background: #F5C4C4; }
+
+/* Card inner layout */
+.journal-card-top {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.journal-brand-icon {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  background: rgba(196,168,130,0.06);
+  border-radius: 14px;
+  padding: 6px;
+}
+
+.journal-brand-icon svg { width: 100%; height: 100%; }
+
+.journal-card-info { flex: 1; }
+
+.journal-card-brand {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.journal-card-drink {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.journal-card[data-brand="喜茶"] .journal-card-drink { color: var(--grape); }
+.journal-card[data-brand="霸王茶姬"] .journal-card-drink { color: var(--red-gold); }
+.journal-card[data-brand="茶颜悦色"] .journal-card-drink { color: var(--cha-yan); }
+.journal-card[data-brand="茉莉奶白"] .journal-card-drink { color: var(--jasmine); }
+.journal-card[data-brand="蜜雪冰城"] .journal-card-drink { color: var(--mixue-red); }
+
+/* AI message in journal style */
+.journal-ai-msg {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(245,230,211,0.3), rgba(242,215,217,0.2));
+  border-radius: 12px;
+  border-left: 3px solid var(--brown);
+  font-style: italic;
+}
+
+/* Equivalents as stickers */
+.journal-stickers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.journal-sticker {
+  font-size: 12px;
+  padding: 5px 10px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 20px;
+  border: 1px dashed rgba(196,168,130,0.3);
+  color: var(--text);
+  transform: rotate(var(--rot, 0deg));
+}
+
+.journal-sticker:nth-child(1) { --rot: -1deg; }
+.journal-sticker:nth-child(2) { --rot: 1deg; }
+.journal-sticker:nth-child(3) { --rot: -0.5deg; }
+
+/* Flip card in journal */
+.journal-flip-wrapper {
+  perspective: 900px;
+  margin-top: 14px;
+}
+
+.journal-flip-card {
+  position: relative;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 14px;
+}
+
+.journal-flip-card.flipped { transform: rotateY(180deg); }
+
+.journal-flip-front, .journal-flip-back {
+  backface-visibility: hidden;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.journal-flip-front {
+  background: rgba(255,255,255,0.5);
+  border: 1px dashed rgba(196,168,130,0.25);
+}
+
+.journal-flip-back {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  transform: rotateY(180deg);
+  background: rgba(255,255,255,0.5);
+  border: 1px dashed rgba(196,168,130,0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.journal-flip-hint {
+  text-align: right;
+  font-size: 10px;
+  color: var(--text-light);
+  opacity: 0.4;
+  margin-top: 8px;
+}
+
+.exercise-row {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.exercise-row .ex-item { text-align: center; }
+.exercise-row .ex-icon { font-size: 24px; }
+.exercise-row .ex-time { font-size: 15px; font-weight: 700; color: var(--text); margin-top: 2px; }
+.exercise-row .ex-label { font-size: 10px; color: var(--text-light); }
+
+.exercise-cal {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.exercise-cal span {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.journal-time-tag {
+  font-size: 10px;
+  color: var(--text-light);
+  opacity: 0.4;
+  text-align: right;
+  margin-top: 10px;
+}
+
+.exercise-cal span {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* Typing indicator */
+.typing-entry {
+  margin-bottom: 24px;
+  animation: fade-up 0.3s ease-out;
+}
+
+.typing-dots {
+  display: inline-flex;
+  gap: 4px;
+  padding: 12px 18px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(93,78,55,0.06);
+}
+
+.typing-dots span {
+  width: 6px; height: 6px;
+  background: var(--brown);
+  border-radius: 50%;
+  animation: bounce 1.2s ease-in-out infinite;
+}
+
+.typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ============ INPUT BAR ============ */
+.input-bar {
+  flex-shrink: 0;
+  padding: 14px 32px;
+  background: rgba(255,248,240,0.85);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(196,168,130,0.15);
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border-radius: 24px;
+  padding: 4px 4px 4px 18px;
+  box-shadow: 0 2px 12px rgba(93,78,55,0.08);
+  border: 1.5px solid rgba(196,168,130,0.2);
+  transition: border-color 0.2s;
+}
+
+.input-wrapper:focus-within { border-color: var(--brown); }
+
+.input-wrapper input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
+}
+
+.input-wrapper input::placeholder { color: var(--text-light); opacity: 0.5; }
+
+.send-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--brown);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.send-btn:hover { background: var(--brown-dark); transform: scale(1.05); }
+.send-btn:active { transform: scale(0.95); }
+.send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.send-btn svg { width: 18px; height: 18px; }
+
+/* ============ DAILY FORTUNE ============ */
+.fortune-card {
+  margin: 0 0 20px;
+  background: white;
+  border-radius: 20px;
+  padding: 22px;
+  position: relative;
+  box-shadow: 0 2px 20px rgba(93,78,55,0.08);
+  border: 1.5px solid rgba(196,168,130,0.15);
+  overflow: hidden;
+  animation: fortune-appear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fortune-appear {
+  from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.fortune-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--grape-light), var(--pink), var(--gold), var(--jasmine-light), var(--pink-deep));
+}
+
+.fortune-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.fortune-date {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 700;
+}
+
+.fortune-streak {
+  font-size: 11px;
+  color: var(--brown-dark);
+  background: rgba(196,168,130,0.12);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.fortune-main {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.fortune-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-family: 'ZCOOL KuaiLe', cursive;
+  color: white;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.fortune-seal::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px dashed currentColor;
+  opacity: 0.3;
+}
+
+.fortune-seal.daji { background: linear-gradient(135deg, #E8635A, #D4A853); }
+.fortune-seal.zhongji { background: linear-gradient(135deg, var(--grape), var(--pink-deep)); }
+.fortune-seal.xiaoji { background: linear-gradient(135deg, var(--jasmine), #8BC49A); }
+.fortune-seal.ji { background: linear-gradient(135deg, var(--brown), var(--cha-yan)); }
+
+.fortune-level {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 18px;
+  color: var(--brown-dark);
+  margin-bottom: 6px;
+}
+
+.fortune-text {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+.fortune-recommend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(245,230,211,0.4);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-light);
+  border: 1px dashed rgba(196,168,130,0.25);
+}
+
+.fortune-recommend .rec-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.fortune-recommend .rec-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.fortune-dismiss {
+  display: block;
+  margin: 12px auto 0;
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--text-light);
+  opacity: 0.4;
+  cursor: pointer;
+}
+
+.fortune-dismiss:hover { opacity: 0.7; }
+
+/* Streak flames */
+.streak-fire {
+  display: inline-block;
+  margin-right: 2px;
+}
+
+/* ============ GACHA CARD REVEAL ============ */
+.gacha-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.gacha-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.gacha-backdrop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(93,78,55,0.4);
+  backdrop-filter: blur(16px);
+}
+
+.gacha-card {
+  position: relative;
+  width: 340px;
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(93,78,55,0.25);
+  transform: scale(0.5) rotateY(90deg);
+  transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.gacha-overlay.open .gacha-card {
+  transform: scale(1) rotateY(0);
+}
+
+.gacha-card-banner {
+  height: 8px;
+}
+
+.gacha-card[data-brand="喜茶"] .gacha-card-banner { background: linear-gradient(90deg, var(--grape), var(--grape-light)); }
+.gacha-card[data-brand="霸王茶姬"] .gacha-card-banner { background: linear-gradient(90deg, var(--red-gold), var(--gold)); }
+.gacha-card[data-brand="茶颜悦色"] .gacha-card-banner { background: linear-gradient(90deg, var(--cha-yan), var(--cha-yan-pink)); }
+.gacha-card[data-brand="茉莉奶白"] .gacha-card-banner { background: linear-gradient(90deg, var(--jasmine), var(--jasmine-light)); }
+.gacha-card[data-brand="蜜雪冰城"] .gacha-card-banner { background: linear-gradient(90deg, var(--mixue-red), var(--mixue-yellow)); }
+
+.gacha-card-body {
+  padding: 28px 24px;
+  perspective: 900px;
+}
+
+.gacha-card-label {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-light);
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.gacha-card-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.gacha-icon {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  background: rgba(196,168,130,0.06);
+  border-radius: 16px;
+  padding: 8px;
+}
+
+.gacha-icon svg { width: 100%; height: 100%; }
+
+.gacha-brand {
+  font-size: 12px;
+  color: var(--text-light);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.gacha-drink {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 24px;
+  margin-top: 2px;
+}
+
+.gacha-card[data-brand="喜茶"] .gacha-drink { color: var(--grape); }
+.gacha-card[data-brand="霸王茶姬"] .gacha-drink { color: var(--red-gold); }
+.gacha-card[data-brand="茶颜悦色"] .gacha-drink { color: var(--cha-yan); }
+.gacha-card[data-brand="茉莉奶白"] .gacha-drink { color: var(--jasmine); }
+.gacha-card[data-brand="蜜雪冰城"] .gacha-drink { color: var(--mixue-red); }
+
+.gacha-msg {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(245,230,211,0.3), rgba(242,215,217,0.2));
+  border-radius: 12px;
+  border-left: 3px solid var(--brown);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+/* Gacha flip inner card */
+.gacha-flip-wrapper {
+  perspective: 900px;
+}
+
+.gacha-flip-inner {
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 14px;
+  position: relative;
+}
+
+.gacha-flip-inner.flipped { transform: rotateY(180deg); }
+
+.gacha-flip-front2, .gacha-flip-back2 {
+  backface-visibility: hidden;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: rgba(245,230,211,0.2);
+  border: 1px dashed rgba(196,168,130,0.25);
+}
+
+.gacha-flip-back2 {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gacha-stickers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.gacha-sticker {
+  font-size: 12px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 20px;
+  border: 1px dashed rgba(196,168,130,0.3);
+  color: var(--text);
+}
+
+.gacha-flip-hint {
+  text-align: right;
+  font-size: 10px;
+  color: var(--text-light);
+  opacity: 0.4;
+  margin-top: 8px;
+}
+
+.gacha-close-btn {
+  display: block;
+  margin: 18px auto 0;
+  padding: 8px 28px;
+  border-radius: 20px;
+  border: 1.5px solid var(--brown);
+  background: transparent;
+  color: var(--brown-dark);
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gacha-close-btn:hover {
+  background: var(--brown);
+  color: white;
+}
+
+/* Sparkle animation on gacha */
+.gacha-sparkles {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.gacha-sparkle {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: sparkle-float 1.5s ease-out forwards;
+}
+
+@keyframes sparkle-float {
+  0% { transform: scale(0); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.8; }
+  100% { transform: translateY(-30px) scale(0); opacity: 0; }
+}
+
+/* ============ REPORT OVERLAY ============ */
+.report-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.report-overlay.open { opacity: 1; pointer-events: all; }
+
+.report-backdrop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(93,78,55,0.3);
+  backdrop-filter: blur(12px);
+}
+
+.report-panel {
+  position: relative;
+  width: 90%;
+  max-width: 480px;
+  max-height: 85vh;
+  background: var(--cream);
+  border-radius: 24px;
+  padding: 32px 24px;
+  overflow-y: auto;
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 20px 60px rgba(93,78,55,0.15);
+}
+
+.report-overlay.open .report-panel { transform: scale(1) translateY(0); }
+
+.report-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(196,168,130,0.15);
+  color: var(--text-light);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.report-title {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 22px;
+  text-align: center;
+  color: var(--brown-dark);
+  margin-bottom: 4px;
+}
+
+.report-period {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 24px;
+}
+
+.report-card {
+  background: white;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(196,168,130,0.1);
+}
+
+.report-card h4 {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 14px;
+  color: var(--brown-dark);
+  margin-bottom: 12px;
+}
+
+.report-stats-row {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.report-stat .stat-num {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.report-stat .stat-label {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.report-equiv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.report-equiv-item {
+  padding: 8px 12px;
+  background: rgba(245,230,211,0.3);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.report-persona {
+  text-align: center;
+  padding: 12px;
+}
+
+.report-persona .persona-emoji { font-size: 48px; margin-bottom: 8px; }
+
+.report-persona .persona-title {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 18px;
+  color: var(--grape);
+  margin-bottom: 6px;
+}
+
+.report-persona .persona-desc {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+/* ============ ATLAS OVERLAY ============ */
+.atlas-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.atlas-overlay.open { opacity: 1; pointer-events: all; }
+
+.atlas-backdrop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(93,78,55,0.3);
+  backdrop-filter: blur(12px);
+}
+
+.atlas-panel {
+  position: relative;
+  width: 90%;
+  max-width: 420px;
+  max-height: 80vh;
+  background: var(--cream);
+  border-radius: 24px;
+  padding: 28px 20px;
+  overflow-y: auto;
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 20px 60px rgba(93,78,55,0.15);
+}
+
+.atlas-overlay.open .atlas-panel { transform: scale(1) translateY(0); }
+
+.atlas-title {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 22px;
+  text-align: center;
+  color: var(--brown-dark);
+  margin-bottom: 6px;
+}
+
+.atlas-subtitle {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+.atlas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.atlas-item {
+  background: white;
+  border-radius: 16px;
+  padding: 16px 8px;
+  text-align: center;
+  transition: all 0.2s;
+  border: 1.5px solid rgba(196,168,130,0.15);
+  cursor: pointer;
+}
+
+.atlas-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(93,78,55,0.1); }
+.atlas-item.locked { opacity: 0.4; filter: grayscale(1); }
+
+.atlas-item .atlas-icon { width: 48px; height: 48px; margin: 0 auto 8px; }
+.atlas-item .atlas-icon svg { width: 100%; height: 100%; }
+
+.atlas-item .atlas-brand-name {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.atlas-item .atlas-count { font-size: 11px; color: var(--text-light); }
+.atlas-item.locked .atlas-brand-name { color: var(--text-light); }
+
+.atlas-close, .report-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(196,168,130,0.15);
+  color: var(--text-light);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.atlas-drink-list { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(196,168,130,0.15); }
+.atlas-drink-list h3 { font-family: 'ZCOOL KuaiLe', cursive; font-size: 16px; color: var(--brown-dark); margin-bottom: 10px; }
+.atlas-drink-item { display: flex; justify-content: space-between; padding: 8px 12px; background: white; border-radius: 10px; margin-bottom: 6px; font-size: 13px; }
+
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+
+    <div class="planet-section" onclick="toggleAtlas()">
+      <h1>奶茶星球</h1>
+      <p class="subtitle">点击星球查看图鉴</p>
+      <div class="planet-wrap">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="85" class="planet-body"/>
+          <ellipse cx="70" cy="80" rx="30" ry="8" class="planet-surface" transform="rotate(-10, 70, 80)"/>
+          <ellipse cx="130" cy="120" rx="25" ry="6" class="planet-surface" transform="rotate(15, 130, 120)"/>
+          <g class="brand-element" id="planet-heytea" transform="translate(45, 42)">
+            <rect x="4" y="6" width="22" height="26" rx="4" fill="var(--grape)" opacity="0.8"/>
+            <rect x="2" y="4" width="26" height="6" rx="3" fill="var(--grape-light)"/>
+            <circle cx="10" cy="20" r="3" fill="var(--grape-light)" opacity="0.6"/>
+            <circle cx="18" cy="16" r="2.5" fill="var(--grape-light)" opacity="0.5"/>
+          </g>
+          <g class="brand-element" id="planet-bawang" transform="translate(130, 48)">
+            <path d="M15,0 Q25,12 15,28 Q5,12 15,0Z" fill="var(--red-gold)" opacity="0.85"/>
+            <line x1="15" y1="4" x2="15" y2="24" stroke="var(--gold)" stroke-width="1" opacity="0.6"/>
+          </g>
+          <g class="brand-element" id="planet-chayan" transform="translate(30, 100)">
+            <path d="M15,25 L15,8 Q5,0 0,8 Q-2,14 6,18Z" fill="var(--cha-yan)" opacity="0.7"/>
+            <path d="M15,25 L15,8 Q25,0 30,8 Q32,14 24,18Z" fill="var(--cha-yan-pink)" opacity="0.7"/>
+          </g>
+          <g class="brand-element" id="planet-jasmine" transform="translate(138, 95)">
+            <ellipse cx="12" cy="12" rx="5" ry="8" fill="white" stroke="var(--jasmine-light)" stroke-width="0.5"/>
+            <ellipse cx="12" cy="12" rx="5" ry="8" fill="white" stroke="var(--jasmine-light)" stroke-width="0.5" transform="rotate(72, 12, 12)"/>
+            <ellipse cx="12" cy="12" rx="5" ry="8" fill="white" stroke="var(--jasmine-light)" stroke-width="0.5" transform="rotate(144, 12, 12)"/>
+            <circle cx="12" cy="12" r="4" fill="var(--jasmine-light)"/>
+          </g>
+          <g class="brand-element" id="planet-mixue" transform="translate(75, 140)">
+            <circle cx="15" cy="16" r="12" fill="white" stroke="var(--mixue-red)" stroke-width="1"/>
+            <path d="M5,10 L8,4 L12,9 L15,2 L18,9 L22,4 L25,10" fill="var(--mixue-yellow)" stroke="var(--mixue-red)" stroke-width="0.8"/>
+            <circle cx="11" cy="16" r="1.5" fill="var(--mixue-red)"/>
+            <circle cx="19" cy="16" r="1.5" fill="var(--mixue-red)"/>
+            <path d="M11,20 Q15,23 19,20" fill="none" stroke="var(--mixue-red)" stroke-width="1" stroke-linecap="round"/>
+          </g>
+          <ellipse cx="100" cy="100" rx="95" ry="20" fill="none" stroke="var(--brown)" stroke-width="0.6" opacity="0.15" transform="rotate(-20, 100, 100)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="calendar-section">
+      <div class="cal-header">
+        <h3 id="calTitle"></h3>
+        <div class="cal-nav">
+          <button onclick="changeMonth(-1)">&larr;</button>
+          <button onclick="changeMonth(1)">&rarr;</button>
+        </div>
+      </div>
+      <div class="cal-weekdays">
+        <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+      </div>
+      <div class="cal-days" id="calDays"></div>
+    </div>
+
+    <div class="report-buttons">
+      <button class="report-btn" onclick="showReport('week')">本周报告</button>
+      <button class="report-btn" onclick="showReport('month')">本月报告</button>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <div class="journal-header">
+      <h2>奶茶手账</h2>
+      <span class="tea-count" id="teaCount">共 0 杯</span>
+    </div>
+
+    <div class="journal-area" id="journalArea">
+      <div class="welcome-msg">
+        <div class="emoji">🧋</div>
+        <p>欢迎来到奶茶星球~<br>在下方输入你今天喝了什么奶茶<br>比如「刚喝了一杯多肉葡萄」</p>
+      </div>
+    </div>
+
+    <div class="input-bar">
+      <div class="input-wrapper">
+        <input type="text" id="chatInput" placeholder="今天喝了什么呀？" autocomplete="off" />
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Atlas Overlay -->
+<div class="atlas-overlay" id="atlasOverlay">
+  <div class="atlas-backdrop" onclick="toggleAtlas()"></div>
+  <div class="atlas-panel">
+    <button class="atlas-close" onclick="toggleAtlas()">&times;</button>
+    <h2 class="atlas-title">奶茶图鉴</h2>
+    <p class="atlas-subtitle" id="atlasSubtitle">已收集 0 / 5 个品牌</p>
+    <div class="atlas-grid" id="atlasGrid"></div>
+    <div id="atlasDrinkDetail"></div>
+  </div>
+</div>
+
+<!-- Gacha Card Reveal -->
+<div class="gacha-overlay" id="gachaOverlay">
+  <div class="gacha-backdrop" onclick="closeGacha()"></div>
+  <div class="gacha-card" id="gachaCard">
+    <div class="gacha-sparkles" id="gachaSparkles"></div>
+  </div>
+</div>
+
+<!-- Report Overlay -->
+<div class="report-overlay" id="reportOverlay">
+  <div class="report-backdrop" onclick="closeReport()"></div>
+  <div class="report-panel" id="reportPanel"></div>
+</div>
+
+<script>
+const DEEPSEEK_API_KEY = 'sk-62969216c97a4ab09feaaa6b90352ecf';
+const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
+
+const BRANDS = {
+  '喜茶': {
+    planetId: 'planet-heytea',
+    iconSVG: `<svg viewBox="0 0 44 44"><rect x="8" y="12" width="28" height="26" rx="5" fill="#9B6BA3" opacity="0.8"/><rect x="6" y="8" width="32" height="8" rx="4" fill="#D4B5DC"/><circle cx="18" cy="26" r="4" fill="#D4B5DC" opacity="0.6"/><circle cx="28" cy="22" r="3" fill="#D4B5DC" opacity="0.5"/></svg>`,
+    miniSVG: `<svg viewBox="0 0 20 20"><rect x="4" y="5" width="12" height="12" rx="3" fill="#9B6BA3" opacity="0.8"/><rect x="3" y="3" width="14" height="4" rx="2" fill="#D4B5DC"/></svg>`,
+  },
+  '霸王茶姬': {
+    planetId: 'planet-bawang',
+    iconSVG: `<svg viewBox="0 0 44 44"><path d="M22,4 Q34,18 22,38 Q10,18 22,4Z" fill="#C4463A" opacity="0.85"/><line x1="22" y1="10" x2="22" y2="32" stroke="#D4A853" stroke-width="1.2" opacity="0.6"/></svg>`,
+    miniSVG: `<svg viewBox="0 0 20 20"><path d="M10,2 Q16,9 10,18 Q4,9 10,2Z" fill="#C4463A" opacity="0.85"/></svg>`,
+  },
+  '茶颜悦色': {
+    planetId: 'planet-chayan',
+    iconSVG: `<svg viewBox="0 0 44 44"><path d="M22,34 L22,14 Q10,4 4,14 Q2,22 12,26Z" fill="#C4956A" opacity="0.7"/><path d="M22,34 L22,14 Q34,4 40,14 Q42,22 32,26Z" fill="#D4A08A" opacity="0.7"/></svg>`,
+    miniSVG: `<svg viewBox="0 0 20 20"><path d="M10,16 L10,6 Q4,1 1,6 Q0,10 5,12Z" fill="#C4956A" opacity="0.7"/><path d="M10,16 L10,6 Q16,1 19,6 Q20,10 15,12Z" fill="#D4A08A" opacity="0.7"/></svg>`,
+  },
+  '茉莉奶白': {
+    planetId: 'planet-jasmine',
+    iconSVG: `<svg viewBox="0 0 44 44"><ellipse cx="22" cy="22" rx="7" ry="12" fill="white" stroke="#B8D9BA" stroke-width="0.8"/><ellipse cx="22" cy="22" rx="7" ry="12" fill="white" stroke="#B8D9BA" stroke-width="0.8" transform="rotate(72,22,22)"/><ellipse cx="22" cy="22" rx="7" ry="12" fill="white" stroke="#B8D9BA" stroke-width="0.8" transform="rotate(144,22,22)"/><circle cx="22" cy="22" r="6" fill="#B8D9BA"/></svg>`,
+    miniSVG: `<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="4" fill="white" stroke="#B8D9BA" stroke-width="1"/><circle cx="10" cy="10" r="2" fill="#B8D9BA"/></svg>`,
+  },
+  '蜜雪冰城': {
+    planetId: 'planet-mixue',
+    iconSVG: `<svg viewBox="0 0 44 44"><circle cx="22" cy="24" r="14" fill="white" stroke="#E23D3D" stroke-width="1.2"/><path d="M10,16 L14,8 L18,14 L22,4 L26,14 L30,8 L34,16" fill="#F5D547" stroke="#E23D3D" stroke-width="1"/><circle cx="17" cy="24" r="2" fill="#E23D3D"/><circle cx="27" cy="24" r="2" fill="#E23D3D"/><path d="M17,30 Q22,34 27,30" fill="none" stroke="#E23D3D" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    miniSVG: `<svg viewBox="0 0 20 20"><circle cx="10" cy="11" r="7" fill="white" stroke="#E23D3D" stroke-width="0.8"/><path d="M4,7 L6,3 L8,6 L10,1 L12,6 L14,3 L16,7" fill="#F5D547" stroke="#E23D3D" stroke-width="0.6"/></svg>`,
+  }
+};
+
+// ============ STATE ============
+let state = loadState();
+let currentMonth = new Date();
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('milkTeaPlanet');
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return {
+    collections: {
+      '喜茶': { unlocked: false, count: 0, drinks: {} },
+      '霸王茶姬': { unlocked: false, count: 0, drinks: {} },
+      '茶颜悦色': { unlocked: false, count: 0, drinks: {} },
+      '茉莉奶白': { unlocked: false, count: 0, drinks: {} },
+      '蜜雪冰城': { unlocked: false, count: 0, drinks: {} },
+    },
+    history: []
+  };
+}
+
+function saveState() {
+  localStorage.setItem('milkTeaPlanet', JSON.stringify(state));
+}
+
+// ============ INIT ============
+function init() {
+  updatePlanet();
+  renderAtlas();
+  renderCalendar();
+  updateTeaCount();
+  document.getElementById('chatInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.isComposing) sendMessage();
+  });
+}
+
+// ============ PLANET ============
+function updatePlanet() {
+  for (const [brand, data] of Object.entries(BRANDS)) {
+    const el = document.getElementById(data.planetId);
+    if (el) {
+      if (state.collections[brand].unlocked) el.classList.add('collected');
+      else el.classList.remove('collected');
+    }
+  }
+}
+
+function celebratePlanet(brand) {
+  const el = document.getElementById(BRANDS[brand].planetId);
+  if (el) {
+    el.classList.add('collected', 'just-collected');
+    setTimeout(() => el.classList.remove('just-collected'), 1000);
+  }
+  const container = document.querySelector('.planet-wrap');
+  for (let i = 0; i < 8; i++) {
+    const star = document.createElement('div');
+    star.className = 'celebration-star';
+    star.style.left = (80 + (Math.random() - 0.5) * 80) + 'px';
+    star.style.top = (80 + (Math.random() - 0.5) * 60) + 'px';
+    star.style.animationDelay = (Math.random() * 0.3) + 's';
+    star.style.background = ['var(--gold)', 'var(--pink-deep)', 'var(--grape-light)'][Math.floor(Math.random() * 3)];
+    container.appendChild(star);
+    setTimeout(() => star.remove(), 1500);
+  }
+}
+
+// ============ CALENDAR ============
+function renderCalendar() {
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  document.getElementById('calTitle').textContent = `${year}年${month + 1}月`;
+
+  const firstDay = new Date(year, month, 1);
+  let startDay = firstDay.getDay() - 1;
+  if (startDay < 0) startDay = 6; // Monday start
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = new Date();
+
+  // Get tea data for this month
+  const teaDays = {};
+  state.history.forEach(h => {
+    const d = new Date(h.timestamp);
+    if (d.getFullYear() === year && d.getMonth() === month) {
+      const day = d.getDate();
+      if (!teaDays[day]) teaDays[day] = [];
+      teaDays[day].push(h.brand);
+    }
+  });
+
+  let html = '';
+  // Empty cells before first day
+  for (let i = 0; i < startDay; i++) {
+    html += '<div class="cal-day empty"></div>';
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+    const teas = teaDays[d];
+    const hasTea = teas && teas.length > 0;
+    const lastBrand = hasTea ? teas[teas.length - 1] : null;
+    const brandData = lastBrand && BRANDS[lastBrand] ? BRANDS[lastBrand] : null;
+
+    html += `<div class="cal-day ${isToday ? 'today' : ''} ${hasTea ? 'has-tea' : ''}">`;
+    html += `<span>${d}</span>`;
+    if (brandData) {
+      html += `<div class="cal-sticker">${brandData.miniSVG}</div>`;
+    }
+    html += '</div>';
+  }
+
+  document.getElementById('calDays').innerHTML = html;
+}
+
+function changeMonth(delta) {
+  currentMonth.setMonth(currentMonth.getMonth() + delta);
+  renderCalendar();
+}
+
+function updateTeaCount() {
+  const total = state.history.length;
+  document.getElementById('teaCount').textContent = `共 ${total} 杯`;
+}
+
+// ============ JOURNAL ============
+function addTypingIndicator() {
+  const area = document.getElementById('journalArea');
+  const div = document.createElement('div');
+  div.className = 'typing-entry';
+  div.id = 'typingIndicator';
+  div.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  area.appendChild(div);
+  scrollToBottom();
+}
+
+function removeTypingIndicator() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function addJournalEntry(data, userText) {
+  const area = document.getElementById('journalArea');
+  const now = new Date();
+  const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+  const dateStr = `${now.getMonth()+1}月${now.getDate()}日 ${['日','一','二','三','四','五','六'][now.getDay()]}`;
+
+  const brand = data.brand || '未知品牌';
+  const brandData = BRANDS[brand];
+  const iconSVG = brandData ? brandData.iconSVG : '';
+  const entryId = 'entry-' + Date.now();
+
+  const entry = document.createElement('div');
+  entry.className = 'journal-entry';
+  entry.innerHTML = `
+    <div class="journal-date-divider">
+      <span class="date-tag">${dateStr}</span>
+      <div class="date-line"></div>
+    </div>
+    <div class="journal-user-line">
+      <span class="user-avatar">我</span>
+      <span>${escapeHtml(userText)}</span>
+    </div>
+    <div class="journal-card" data-brand="${brand}">
+      <div class="journal-card-top">
+        <div class="journal-brand-icon">${iconSVG}</div>
+        <div class="journal-card-info">
+          <div class="journal-card-brand">${brand}</div>
+          <div class="journal-card-drink">${data.drink || ''}</div>
+        </div>
+      </div>
+      <div class="journal-ai-msg">${escapeHtml(data.aiMessage || '')}</div>
+      <div class="journal-flip-wrapper">
+        <div class="journal-flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="journal-flip-front">
+            <div class="journal-stickers">
+              ${(data.positiveEquivalents || []).map(eq => `<span class="journal-sticker">${eq}</span>`).join('')}
+            </div>
+            <div class="journal-flip-hint">点击翻转看运动换算 ↻</div>
+          </div>
+          <div class="journal-flip-back">
+            <div class="exercise-cal"><span>${data.calories || '?'}</span> kcal</div>
+            <div class="exercise-row">
+              <div class="ex-item"><div class="ex-icon">🚶‍♀️</div><div class="ex-time">${data.exerciseEquivalents?.walk || '?'}</div><div class="ex-label">散步</div></div>
+              <div class="ex-item"><div class="ex-icon">🏃‍♀️</div><div class="ex-time">${data.exerciseEquivalents?.run || '?'}</div><div class="ex-label">跑步</div></div>
+              <div class="ex-item"><div class="ex-icon">🏊‍♀️</div><div class="ex-time">${data.exerciseEquivalents?.swim || '?'}</div><div class="ex-label">游泳</div></div>
+            </div>
+            <div class="journal-flip-hint">点击翻回正面 ↻</div>
+          </div>
+        </div>
+      </div>
+      <div class="journal-time-tag">${timeStr}</div>
+    </div>
+  `;
+
+  area.appendChild(entry);
+  scrollToBottom();
+}
+
+function addErrorEntry(userText, errMsg) {
+  const area = document.getElementById('journalArea');
+  const entry = document.createElement('div');
+  entry.className = 'journal-entry';
+  entry.innerHTML = `
+    <div class="journal-user-line">
+      <span class="user-avatar">我</span>
+      <span>${escapeHtml(userText)}</span>
+    </div>
+    <div class="journal-card" style="border-color:var(--pink-deep);">
+      <div class="journal-ai-msg" style="border-left-color:var(--pink-deep);">哎呀，星球信号不太好~ ${escapeHtml(errMsg)}</div>
+    </div>
+  `;
+  area.appendChild(entry);
+  scrollToBottom();
+}
+
+function addChatOnlyEntry(userText, aiMsg) {
+  const area = document.getElementById('journalArea');
+  const entry = document.createElement('div');
+  entry.className = 'journal-entry';
+  entry.innerHTML = `
+    <div class="journal-user-line">
+      <span class="user-avatar">我</span>
+      <span>${escapeHtml(userText)}</span>
+    </div>
+    <div class="journal-card">
+      <div class="journal-ai-msg">${escapeHtml(aiMsg)}</div>
+    </div>
+  `;
+  area.appendChild(entry);
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  const area = document.getElementById('journalArea');
+  setTimeout(() => area.scrollTop = area.scrollHeight, 50);
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ============ CONVERSATION HISTORY ============
+let conversationHistory = [];
+let isSending = false;
+
+const SYSTEM_PROMPT = `你是"奶茶星球"的AI助手，一个可爱治愈的奶茶记录应用。你和用户在进行多轮对话。
+
+你的任务是帮用户记录他们喝的奶茶。你需要通过对话确认两个信息：品牌和具体饮品名称。
+
+对话规则：
+1. 如果用户同时提到了品牌和饮品（如"喜茶多肉葡萄"），直接生成完整记录
+2. 如果用户只提到品牌没提饮品（如"喝了喜茶"），用可爱语气追问具体喝了哪款
+3. 如果用户只提到饮品没提品牌（如"喝了伯牙绝弦"），根据你的知识推断品牌。伯牙绝弦是霸王茶姬的，多肉葡萄是喜茶的，幽兰拿铁是茶颜悦色的，等等
+4. 如果用户在追问后只回答了饮品名或品牌名（如上一轮问了喝什么品牌，用户回答"霸王茶姬"），结合上下文理解完整信息
+5. 如果用户的消息和奶茶无关，正常可爱地聊天
+
+支持的品牌：喜茶、霸王茶姬、茶颜悦色、茉莉奶白、蜜雪冰城。不在列表中的品牌用"其他"。
+
+当你能确定品牌和饮品时，返回完整JSON（不要包含markdown代码块标记）：
+{
+  "aiMessage": "治愈的一句话文案",
+  "brand": "品牌名",
+  "drink": "饮品名",
+  "calories": 数字,
+  "positiveEquivalents": ["☀️ 相当于xx分钟午后阳光", "🎵 相当于听x首喜欢的歌", "🌸 足够让x朵小花开放"],
+  "exerciseEquivalents": {"walk": "xxmin", "run": "xxmin", "swim": "xxmin"}
+}
+
+当你还需要追问时，只返回：
+{"aiMessage": "你的追问或回复"}`;
+
+// ============ SEND MESSAGE ============
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text || isSending) return;
+
+  isSending = true;
+  input.value = '';
+  document.getElementById('sendBtn').disabled = true;
+
+  // Show user message in journal
+  addUserLine(text);
+  addTypingIndicator();
+
+  try {
+    // Add to conversation history
+    conversationHistory.push({ role: 'user', content: text });
+
+    const result = await callDeepSeek();
+    removeTypingIndicator();
+
+    if (result.brand && result.drink) {
+      // Full record — show gacha card reveal!
+      conversationHistory.push({ role: 'assistant', content: JSON.stringify(result) });
+      showGachaCard(result, text);
+      // Also add to journal (behind the overlay)
+      addJournalEntry(result, text);
+      updateCollection(result);
+      // Clear conversation for next tea
+      conversationHistory = [];
+    } else if (result.aiMessage) {
+      // Still chatting / asking follow-up
+      conversationHistory.push({ role: 'assistant', content: JSON.stringify(result) });
+      addAiLine(result.aiMessage);
+    }
+  } catch(err) {
+    removeTypingIndicator();
+    addAiLine('哎呀，星球信号不太好~ ' + err.message);
+  }
+
+  isSending = false;
+  document.getElementById('sendBtn').disabled = false;
+}
+
+// Lightweight chat lines (not full journal entries)
+function addUserLine(text) {
+  const area = document.getElementById('journalArea');
+  const div = document.createElement('div');
+  div.className = 'journal-entry';
+  div.style.marginBottom = '8px';
+  div.innerHTML = `<div class="journal-user-line"><span class="user-avatar">我</span><span>${escapeHtml(text)}</span></div>`;
+  area.appendChild(div);
+  scrollToBottom();
+}
+
+function addAiLine(text) {
+  const area = document.getElementById('journalArea');
+  const div = document.createElement('div');
+  div.className = 'journal-entry';
+  div.style.marginBottom = '8px';
+  div.innerHTML = `<div class="journal-card" style="padding:14px 18px;"><div class="journal-ai-msg" style="margin-bottom:0;">${escapeHtml(text)}</div></div>`;
+  area.appendChild(div);
+  scrollToBottom();
+}
+
+// ============ GACHA CARD ============
+function showGachaCard(data, userText) {
+  const overlay = document.getElementById('gachaOverlay');
+  const card = document.getElementById('gachaCard');
+  const brand = data.brand || '未知品牌';
+  const brandData = BRANDS[brand];
+  const iconSVG = brandData ? brandData.iconSVG : '';
+
+  card.setAttribute('data-brand', brand);
+  card.innerHTML = `
+    <div class="gacha-sparkles" id="gachaSparkles"></div>
+    <div class="gacha-card-banner"></div>
+    <div class="gacha-card-body">
+      <div class="gacha-card-label">今 日 奶 茶 记 录</div>
+      <div class="gacha-card-top">
+        <div class="gacha-icon">${iconSVG}</div>
+        <div>
+          <div class="gacha-brand">${brand}</div>
+          <div class="gacha-drink">${data.drink || ''}</div>
+        </div>
+      </div>
+      <div class="gacha-msg">${escapeHtml(data.aiMessage || '')}</div>
+      <div class="gacha-flip-wrapper">
+        <div class="gacha-flip-inner" onclick="this.classList.toggle('flipped')">
+          <div class="gacha-flip-front2">
+            <div class="gacha-stickers">
+              ${(data.positiveEquivalents || []).map(eq => `<span class="gacha-sticker">${eq}</span>`).join('')}
+            </div>
+            <div class="gacha-flip-hint">点击翻转看运动换算 ↻</div>
+          </div>
+          <div class="gacha-flip-back2">
+            <div class="exercise-cal"><span>${data.calories || '?'}</span> kcal</div>
+            <div class="exercise-row">
+              <div class="ex-item"><div class="ex-icon">🚶‍♀️</div><div class="ex-time">${data.exerciseEquivalents?.walk || '?'}</div><div class="ex-label">散步</div></div>
+              <div class="ex-item"><div class="ex-icon">🏃‍♀️</div><div class="ex-time">${data.exerciseEquivalents?.run || '?'}</div><div class="ex-label">跑步</div></div>
+              <div class="ex-item"><div class="ex-icon">🏊‍♀️</div><div class="ex-time">${data.exerciseEquivalents?.swim || '?'}</div><div class="ex-label">游泳</div></div>
+            </div>
+            <div class="gacha-flip-hint">点击翻回 ↻</div>
+          </div>
+        </div>
+      </div>
+      <button class="gacha-close-btn" onclick="closeGacha()">收入手账 ✦</button>
+    </div>
+  `;
+
+  overlay.classList.add('open');
+
+  // Spawn sparkles
+  const sparkles = document.getElementById('gachaSparkles');
+  for (let i = 0; i < 12; i++) {
+    const s = document.createElement('div');
+    s.className = 'gacha-sparkle';
+    s.style.left = (Math.random() * 100) + '%';
+    s.style.top = (Math.random() * 100) + '%';
+    s.style.animationDelay = (Math.random() * 0.8) + 's';
+    s.style.background = ['var(--gold)', 'var(--pink-deep)', 'var(--grape-light)', 'var(--jasmine-light)', 'white'][Math.floor(Math.random() * 5)];
+    sparkles.appendChild(s);
+    setTimeout(() => s.remove(), 2000);
+  }
+}
+
+function closeGacha() {
+  document.getElementById('gachaOverlay').classList.remove('open');
+}
+
+// ============ DEEPSEEK API ============
+async function callDeepSeek() {
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...conversationHistory
+  ];
+
+  const response = await fetch(DEEPSEEK_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      messages: messages,
+      temperature: 0.8,
+      max_tokens: 500
+    })
+  });
+
+  if (!response.ok) throw new Error(`API 请求失败 (${response.status})`);
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content || '';
+  let cleaned = content.trim();
+  if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+  }
+  try { return JSON.parse(cleaned); }
+  catch(e) { return { aiMessage: content }; }
+}
+
+// ============ COLLECTION ============
+function updateCollection(data) {
+  const brand = data.brand;
+  if (!state.collections[brand]) return;
+  const wasLocked = !state.collections[brand].unlocked;
+
+  state.collections[brand].unlocked = true;
+  state.collections[brand].count += 1;
+
+  if (data.drink) {
+    if (!state.collections[brand].drinks[data.drink]) state.collections[brand].drinks[data.drink] = 0;
+    state.collections[brand].drinks[data.drink] += 1;
+  }
+
+  state.history.push({
+    brand: data.brand,
+    drink: data.drink,
+    calories: data.calories,
+    positiveEquivalents: data.positiveEquivalents,
+    exerciseEquivalents: data.exerciseEquivalents,
+    aiMessage: data.aiMessage,
+    timestamp: new Date().toISOString()
+  });
+
+  saveState();
+  updatePlanet();
+  renderAtlas();
+  renderCalendar();
+  updateTeaCount();
+
+  if (wasLocked) celebratePlanet(brand);
+}
+
+// ============ ATLAS ============
+function toggleAtlas() {
+  document.getElementById('atlasOverlay').classList.toggle('open');
+  document.getElementById('atlasDrinkDetail').innerHTML = '';
+}
+
+function renderAtlas() {
+  const grid = document.getElementById('atlasGrid');
+  let collected = 0;
+  let html = '';
+  Object.keys(BRANDS).forEach(brand => {
+    const col = state.collections[brand];
+    const isLocked = !col.unlocked;
+    if (!isLocked) collected++;
+    html += `
+      <div class="atlas-item ${isLocked ? 'locked' : ''}" onclick="${isLocked ? '' : `showDrinkDetail('${brand}')`}">
+        <div class="atlas-icon">${BRANDS[brand].iconSVG}</div>
+        <div class="atlas-brand-name">${isLocked ? '???' : brand}</div>
+        <div class="atlas-count">${isLocked ? '未解锁' : `已喝 ${col.count} 杯`}</div>
+      </div>`;
+  });
+  grid.innerHTML = html;
+  document.getElementById('atlasSubtitle').textContent = `已收集 ${collected} / 5 个品牌`;
+}
+
+function showDrinkDetail(brand) {
+  const col = state.collections[brand];
+  const el = document.getElementById('atlasDrinkDetail');
+  if (!col?.unlocked) return;
+  const drinks = Object.entries(col.drinks);
+  let html = `<div class="atlas-drink-list"><h3>${brand} · 饮品记录</h3>`;
+  if (drinks.length === 0) html += '<p style="font-size:13px;color:var(--text-light)">还没有记录~</p>';
+  else drinks.forEach(([name, count]) => {
+    html += `<div class="atlas-drink-item"><span>${name}</span><span style="color:var(--text-light);font-size:11px">× ${count}</span></div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ============ REPORT ============
+function showReport(type) {
+  const overlay = document.getElementById('reportOverlay');
+  const panel = document.getElementById('reportPanel');
+  const now = new Date();
+
+  let periodLabel = '';
+  if (type === 'week') {
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay() + 1);
+    periodLabel = `${weekStart.getMonth()+1}月${weekStart.getDate()}日 - ${now.getMonth()+1}月${now.getDate()}日`;
+  } else {
+    periodLabel = `${now.getFullYear()}年${now.getMonth()+1}月`;
+  }
+
+  // Calculate stats
+  const total = state.history.length;
+  const totalCal = state.history.reduce((s, h) => s + (h.calories || 0), 0);
+  const brandCounts = {};
+  state.history.forEach(h => { brandCounts[h.brand] = (brandCounts[h.brand] || 0) + 1; });
+  const favBrand = Object.entries(brandCounts).sort((a,b) => b[1] - a[1])[0];
+
+  // Persona
+  const personas = [
+    { emoji: '🍇', title: '果茶少女', desc: '你偏爱清新果味，是个追求新鲜感的活力女孩~' },
+    { emoji: '🍵', title: '经典茶派', desc: '你钟爱传统茶底，骨子里是个有品位的优雅人~' },
+    { emoji: '🧊', title: '冰饮达人', desc: '无论什么季节都要来杯冰的，你就是最酷的那个~' },
+    { emoji: '🥛', title: '奶盖战士', desc: '奶盖是灵魂！你对生活的每一层都要求完美~' },
+    { emoji: '🌸', title: '治愈系少女', desc: '每一杯奶茶都是你的小确幸，温柔的你最可爱~' },
+  ];
+  const persona = personas[Math.floor(Math.random() * personas.length)];
+
+  panel.innerHTML = `
+    <button class="report-close" onclick="closeReport()">&times;</button>
+    <h2 class="report-title">${type === 'week' ? '本周' : '本月'}奶茶报告</h2>
+    <p class="report-period">${periodLabel}</p>
+
+    <div class="report-card">
+      <h4>基础统计</h4>
+      <div class="report-stats-row">
+        <div class="report-stat">
+          <div class="stat-num">${total}</div>
+          <div class="stat-label">总杯数</div>
+        </div>
+        <div class="report-stat">
+          <div class="stat-num">${totalCal}</div>
+          <div class="stat-label">总卡路里</div>
+        </div>
+        <div class="report-stat">
+          <div class="stat-num">${favBrand ? favBrand[0] : '-'}</div>
+          <div class="stat-label">最爱品牌</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-card">
+      <h4>有趣换算</h4>
+      <div class="report-equiv-list">
+        <div class="report-equiv-item">☀️ 这${type === 'week' ? '周' : '个月'}的奶茶 = 晒了 ${Math.round(totalCal / 25)} 分钟太阳</div>
+        <div class="report-equiv-item">🎵 相当于听了 ${Math.round(totalCal / 100)} 首喜欢的歌</div>
+        <div class="report-equiv-item">🐱 相当于撸猫 ${Math.round(totalCal / 30)} 分钟</div>
+        <div class="report-equiv-item">🚶‍♀️ 需要散步 ${Math.round(totalCal / 4)} 分钟消耗</div>
+      </div>
+    </div>
+
+    <div class="report-card">
+      <h4>你的奶茶人格</h4>
+      <div class="report-persona">
+        <div class="persona-emoji">${persona.emoji}</div>
+        <div class="persona-title">${persona.title}</div>
+        <div class="persona-desc">${persona.desc}</div>
+      </div>
+    </div>
+  `;
+
+  overlay.classList.add('open');
+}
+
+function closeReport() {
+  document.getElementById('reportOverlay').classList.remove('open');
+}
+
+// ============ DAILY FORTUNE ============
+const FORTUNES = [
+  { level: '大吉', cls: 'daji', seal: '大吉', texts: [
+    '今天是被奶茶眷顾的一天！无论喝什么都会特别好喝~',
+    '奶茶之神降临！今天喝到的每一口都是双倍快乐~',
+    '运气爆棚的一天！今天的奶茶会带来意想不到的惊喜~',
+  ]},
+  { level: '中吉', cls: 'zhongji', seal: '中吉', texts: [
+    '今天适合尝试一杯新口味，也许会发现新大陆哦~',
+    '稳稳的好运气，来一杯经典款奖励自己吧~',
+    '中等偏上的奶茶运！今天的甜度会刚刚好~',
+  ]},
+  { level: '小吉', cls: 'xiaoji', seal: '小吉', texts: [
+    '今天适合喝一杯清爽的，给身体一个轻松的下午~',
+    '小小的确幸在等你，一杯简单的奶茶就能点亮今天~',
+    '今天的运势像奶盖一样绵密~适合慢慢品味~',
+  ]},
+  { level: '吉', cls: 'ji', seal: '吉', texts: [
+    '平平淡淡也是福，今天喝一杯暖暖的奶茶就很好~',
+    '今天的奶茶运势：宜温热，宜经典，宜和好朋友分享~',
+    '踏踏实实的一天，一杯熟悉的味道是最好的陪伴~',
+  ]},
+];
+
+const FORTUNE_RECOMMENDS = [
+  { brand: '喜茶', drink: '多肉葡萄', reason: '让葡萄紫点亮你的下午' },
+  { brand: '霸王茶姬', drink: '伯牙绝弦', reason: '茶香悠远，适合静静品味' },
+  { brand: '茶颜悦色', drink: '幽兰拿铁', reason: '温柔的拿铁最治愈' },
+  { brand: '茉莉奶白', drink: '茉莉奶白', reason: '清新花香，心情也跟着变好' },
+  { brand: '蜜雪冰城', drink: '柠檬水', reason: '简单清爽，快乐也可以很简单' },
+  { brand: '喜茶', drink: '芝芝芒芒', reason: '芒果的甜蜜最适合今天的你' },
+  { brand: '霸王茶姬', drink: '桂馥兰香', reason: '桂花飘香，秋天的味道' },
+  { brand: '茶颜悦色', drink: '声声乌龙', reason: '乌龙的清甜会让你微笑' },
+];
+
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getDailyFortune() {
+  const today = getTodayStr();
+  let fortuneState = {};
+  try { fortuneState = JSON.parse(localStorage.getItem('milkTeaFortune') || '{}'); } catch(e) {}
+
+  // Check if already signed in today
+  if (fortuneState.lastDate === today) {
+    return fortuneState;
+  }
+
+  // New day — generate fortune
+  // Seed random with date for consistency within a day
+  const seed = today.split('-').join('') | 0;
+  const rand = (n) => ((seed * 9301 + 49297) % 233280) / 233280 * n | 0;
+
+  const fortuneIdx = rand(FORTUNES.length);
+  const fortune = FORTUNES[fortuneIdx];
+  const textIdx = rand(fortune.texts.length);
+  const recIdx = rand(FORTUNE_RECOMMENDS.length);
+
+  // Calculate streak
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
+
+  let streak = fortuneState.streak || 0;
+  if (fortuneState.lastDate === yesterdayStr) {
+    streak += 1;
+  } else if (fortuneState.lastDate !== today) {
+    streak = 1;
+  }
+
+  const newState = {
+    lastDate: today,
+    streak: streak,
+    fortune: {
+      level: fortune.level,
+      cls: fortune.cls,
+      seal: fortune.seal,
+      text: fortune.texts[textIdx],
+      recommend: FORTUNE_RECOMMENDS[recIdx],
+    },
+    dismissed: false,
+  };
+
+  localStorage.setItem('milkTeaFortune', JSON.stringify(newState));
+  return newState;
+}
+
+function renderFortune() {
+  const fortuneState = getDailyFortune();
+  if (fortuneState.dismissed) return;
+
+  const f = fortuneState.fortune;
+  const rec = f.recommend;
+  const brandData = BRANDS[rec.brand];
+  const miniSVG = brandData ? brandData.miniSVG : '';
+
+  const now = new Date();
+  const dateLabel = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ${['周日','周一','周二','周三','周四','周五','周六'][now.getDay()]}`;
+
+  const streakText = fortuneState.streak >= 2
+    ? `<span class="streak-fire">🔥</span>连续签到 ${fortuneState.streak} 天`
+    : '今日已签到';
+
+  const area = document.getElementById('journalArea');
+  const card = document.createElement('div');
+  card.className = 'fortune-card';
+  card.id = 'fortuneCard';
+  card.innerHTML = `
+    <div class="fortune-top">
+      <span class="fortune-date">${dateLabel}</span>
+      <span class="fortune-streak">${streakText}</span>
+    </div>
+    <div class="fortune-main">
+      <div class="fortune-seal ${f.cls}">${f.seal}</div>
+      <div class="fortune-level">今日奶茶运势：${f.level}</div>
+      <div class="fortune-text">${f.text}</div>
+      <div class="fortune-recommend">
+        <div class="rec-icon">${miniSVG}</div>
+        <span>推荐：${rec.brand}「${rec.drink}」— ${rec.reason}</span>
+      </div>
+    </div>
+    <button class="fortune-dismiss" onclick="dismissFortune()">收起</button>
+  `;
+
+  // Insert before welcome or as first child
+  const welcome = area.querySelector('.welcome-msg');
+  if (welcome) {
+    area.insertBefore(card, welcome);
+  } else {
+    area.prepend(card);
+  }
+}
+
+function dismissFortune() {
+  const card = document.getElementById('fortuneCard');
+  if (card) {
+    card.style.transition = 'all 0.3s ease';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(-10px)';
+    setTimeout(() => card.remove(), 300);
+  }
+  try {
+    const s = JSON.parse(localStorage.getItem('milkTeaFortune') || '{}');
+    s.dismissed = true;
+    localStorage.setItem('milkTeaFortune', JSON.stringify(s));
+  } catch(e) {}
+}
+
+// ============ START ============
+init();
+renderFortune();
+</script>
+</body>
+</html>
