@@ -1333,6 +1333,405 @@ html, body {
   color: var(--text-light);
 }
 
+/* ============ WHEEL ENTRY BUTTON ============ */
+.wheel-entry-btn {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 16px;
+  border: 2px dashed var(--brown);
+  background: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(245,230,211,0.5));
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 16px;
+  color: var(--brown-dark);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: wheel-btn-pulse 2.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.wheel-entry-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(212,168,83,0.1), transparent, rgba(155,107,163,0.1), transparent);
+  animation: wheel-btn-shine 3s linear infinite;
+}
+
+@keyframes wheel-btn-shine {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes wheel-btn-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 2px 12px rgba(196,168,130,0.15); }
+  50% { transform: scale(1.02); box-shadow: 0 4px 20px rgba(196,168,130,0.25); }
+}
+
+.wheel-entry-btn:hover {
+  transform: scale(1.05) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(245,230,211,0.7));
+  box-shadow: 0 6px 24px rgba(196,168,130,0.3) !important;
+  border-color: var(--grape);
+}
+
+.wheel-entry-btn:active {
+  transform: scale(0.97) !important;
+}
+
+/* ============ WHEEL OVERLAY ============ */
+.wheel-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 210;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.wheel-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.wheel-backdrop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(93,78,55,0.55);
+  backdrop-filter: blur(8px);
+}
+
+.wheel-panel {
+  position: relative;
+  width: 420px;
+  max-width: 95vw;
+  max-height: 92vh;
+  background: linear-gradient(170deg, var(--cream) 0%, #fff 40%, var(--pink) 100%);
+  border-radius: 28px;
+  padding: 28px 24px;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(93,78,55,0.2);
+  transform: scale(0.85) translateY(30px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.wheel-overlay.open .wheel-panel {
+  transform: scale(1) translateY(0);
+}
+
+.wheel-panel::-webkit-scrollbar { width: 3px; }
+.wheel-panel::-webkit-scrollbar-thumb { background: var(--brown); border-radius: 3px; }
+
+.wheel-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(196,168,130,0.2);
+  background: rgba(255,255,255,0.7);
+  font-size: 18px;
+  color: var(--text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 2;
+}
+
+.wheel-close-btn:hover {
+  background: white;
+  color: var(--text);
+  transform: rotate(90deg);
+}
+
+.wheel-title {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 22px;
+  color: var(--brown-dark);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* City input */
+.wheel-city-section {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.wheel-city-input-wrap {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.wheel-city-input {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(196,168,130,0.3);
+  background: white;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  outline: none;
+  width: 160px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.wheel-city-input:focus {
+  border-color: var(--brown);
+}
+
+.wheel-city-input::placeholder {
+  color: var(--text-light);
+  opacity: 0.5;
+}
+
+.wheel-city-confirm {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background: var(--brown);
+  color: white;
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wheel-city-confirm:hover {
+  background: var(--brown-dark);
+  transform: scale(1.05);
+}
+
+.wheel-city-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 20px;
+  border: 1px dashed var(--brown);
+  font-size: 13px;
+  color: var(--brown-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wheel-city-tag:hover {
+  background: white;
+}
+
+.wheel-city-tag .city-change {
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+/* Weather badge */
+.wheel-weather-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 20px;
+  border: 1px solid rgba(196,168,130,0.15);
+  font-size: 12px;
+  color: var(--text);
+  margin-bottom: 14px;
+  animation: fade-up 0.4s ease-out;
+}
+
+.wheel-weather-badge .weather-temp {
+  font-weight: 700;
+  color: var(--brown-dark);
+}
+
+/* Wheel container */
+.wheel-container {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  margin: 0 auto 20px;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 22px solid var(--brown-dark);
+  z-index: 5;
+  filter: drop-shadow(0 2px 4px rgba(93,78,55,0.3));
+}
+
+.wheel-disc {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  position: relative;
+  transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+  box-shadow: 0 4px 20px rgba(93,78,55,0.15), inset 0 0 0 4px rgba(255,255,255,0.5);
+  border: 3px solid var(--brown);
+}
+
+.wheel-disc.spinning {
+  transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+}
+
+.wheel-segment-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 20px;
+  transform-origin: 0% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  font-size: 9px;
+  font-family: 'ZCOOL KuaiLe', cursive;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  pointer-events: none;
+  font-weight: 700;
+}
+
+/* Spin button */
+.wheel-spin-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid white;
+  background: linear-gradient(135deg, var(--brown), var(--brown-dark));
+  color: white;
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 3;
+  box-shadow: 0 4px 16px rgba(93,78,55,0.3);
+  transition: all 0.2s;
+}
+
+.wheel-spin-btn:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 6px 24px rgba(93,78,55,0.4);
+}
+
+.wheel-spin-btn:active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+.wheel-spin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: translate(-50%, -50%);
+}
+
+/* Result section */
+.wheel-result {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 20px;
+  border: 1.5px solid rgba(196,168,130,0.15);
+  animation: wheel-result-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-top: 4px;
+}
+
+@keyframes wheel-result-appear {
+  from { opacity: 0; transform: translateY(16px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.wheel-result-brand {
+  font-size: 12px;
+  color: var(--text-light);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.wheel-result-drink {
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 24px;
+  color: var(--brown-dark);
+  margin-bottom: 10px;
+}
+
+.wheel-result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.wheel-result-tag {
+  font-size: 12px;
+  padding: 4px 12px;
+  background: rgba(245,230,211,0.5);
+  border-radius: 20px;
+  border: 1px dashed rgba(196,168,130,0.25);
+  color: var(--text);
+}
+
+.wheel-result-msg {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(245,230,211,0.3), rgba(242,215,217,0.2));
+  border-radius: 12px;
+  border-left: 3px solid var(--brown);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+
+.wheel-again-btn {
+  padding: 10px 24px;
+  border-radius: 20px;
+  border: 1.5px solid var(--brown);
+  background: rgba(255,255,255,0.5);
+  font-family: 'ZCOOL KuaiLe', cursive;
+  font-size: 14px;
+  color: var(--brown-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wheel-again-btn:hover {
+  background: white;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(93,78,55,0.1);
+}
+
+.wheel-loading {
+  font-size: 13px;
+  color: var(--text-light);
+  padding: 10px;
+  animation: fade-up 0.3s ease-out;
+}
+
 </style>
 </head>
 <body>
@@ -1412,6 +1811,8 @@ if (localStorage.getItem('milkTeaPwd') === 'ok') {
       <button class="report-btn" onclick="showReport('month')">本月报告</button>
     </div>
 
+    <button class="wheel-entry-btn" onclick="openWheel()">🎰 不知道喝什么？</button>
+
   </div>
 
   <!-- RIGHT PANEL -->
@@ -1468,6 +1869,27 @@ if (localStorage.getItem('milkTeaPwd') === 'ok') {
 <div class="report-overlay" id="reportOverlay">
   <div class="report-backdrop" onclick="closeReport()"></div>
   <div class="report-panel" id="reportPanel"></div>
+</div>
+
+<!-- Wheel Overlay -->
+<div class="wheel-overlay" id="wheelOverlay">
+  <div class="wheel-backdrop" onclick="closeWheel()"></div>
+  <div class="wheel-panel">
+    <button class="wheel-close-btn" onclick="closeWheel()">&times;</button>
+    <div class="wheel-title">🎡 奶茶大转盘</div>
+
+    <div class="wheel-city-section" id="wheelCitySection"></div>
+
+    <div id="wheelWeatherArea" style="text-align:center;"></div>
+
+    <div class="wheel-container">
+      <div class="wheel-pointer"></div>
+      <div class="wheel-disc" id="wheelDisc"></div>
+      <button class="wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">转！</button>
+    </div>
+
+    <div id="wheelResultArea"></div>
+  </div>
 </div>
 
 <script>
@@ -2376,6 +2798,287 @@ function dismissFortune() {
     s.dismissed = true;
     localStorage.setItem('milkTeaFortune', JSON.stringify(s));
   } catch(e) {}
+}
+
+// ============ SPIN WHEEL ============
+
+const BRAND_DRINKS = {
+  '喜茶': ['多肉葡萄', '芝芝芒芒', '烤黑糖波波牛乳', '满杯红柚', '生打椰椰奶冻'],
+  '霸王茶姬': ['伯牙绝弦', '桂馥兰香', '春日桃桃', '万里木兰', '花田乌龙'],
+  '茶颜悦色': ['幽兰拿铁', '声声乌龙', '桂花弄', '蔓越阑珊', '抹茶菩提'],
+  '茉莉奶白': ['茉莉奶白', '茉莉花香奶冻', '栀子绿奶白', '桂花酒酿奶白'],
+  '蜜雪冰城': ['柠檬水', '杨枝甘露', '蜜桃四季春', '摇摇奶昔', '冰鲜柠檬水'],
+  '奈雪的茶': ['霸气芝士草莓', '霸气橙子', '鸭屎香宝藏茶', '杨枝甘露'],
+  '古茗': ['超A芝士葡萄', '生椰拿铁', '杨枝甘露', '招牌芋泥奶茶'],
+  '茶百道': ['杨枝甘露', '超级杯水果茶', '招牌芋圆奶茶', '西瓜啵啵'],
+  '沪上阿姨': ['血糯米奶茶', '五谷奶茶', '芋圆奶茶', '鲜芋仙草奶茶'],
+  '书亦烧仙草': ['烧仙草奶茶', '草莓啵啵', '杨枝甘露', '芋泥啵啵奶茶'],
+  '一点点': ['波霸奶茶', '四季春茶', '红茶拿铁', '百香果绿茶'],
+  'CoCo都可': ['珍珠奶茶', '百香双响炮', '芒果欧蕾', '鲜芋牛奶'],
+  '乐乐茶': ['脏脏茶', '芝芝莓莓', '鲜橙多肉', '手打柠檬茶'],
+  '益禾堂': ['益禾烤奶', '满杯百香果', '冰淇淋奶茶', '茉莉奶绿'],
+  '甜啦啦': ['一桶水果茶', '珍珠奶茶', '柠檬红茶', '芋泥奶茶'],
+  '7分甜': ['杨枝甘露', '芒果西米露', '芋泥啵啵奶茶', '生椰拿铁'],
+};
+
+const WHEEL_BRAND_COLORS = [
+  '#9B6BA3', '#C4463A', '#C4956A', '#7BAE7F', '#E23D3D', '#E88B7A', '#2E7D4F', '#F0943A',
+  '#D4564E', '#6B4226', '#3A9CA0', '#8CC63F', '#E85B8A', '#C9943A', '#F291A8', '#7BAFD4'
+];
+
+const WHEEL_BRANDS_LIST = Object.keys(BRAND_DRINKS);
+
+const WEATHER_TEMPLATES = {
+  hot: [
+    "今天{temp}°C，热化了！来一杯{brand}的{drink}，{ice}，清凉一下~",
+    "{temp}°C的天气就该喝冰的！推荐{brand}「{drink}」，记得要{ice}哦~",
+    "这{temp}°C的天，不来杯冰冰的{brand}「{drink}」怎么行！{ice}最爽~",
+    "{city}{temp}°C好热呀！快去{brand}来一杯{drink}，{ice}，续命必备！",
+  ],
+  warm: [
+    "今天{temp}°C，刚刚好~来一杯{brand}的{drink}，{sugar}，享受这个温柔的下午~",
+    "{temp}°C的天气，适合慢慢喝一杯{brand}「{drink}」，{sugar}刚刚好~",
+    "不冷不热的{temp}°C，最适合来杯{brand}的{drink}了，{sugar}，美滋滋~",
+    "{city}今天{temp}°C，天气真好！去{brand}点一杯{drink}，{sugar}，犒劳自己~",
+  ],
+  cold: [
+    "外面只有{temp}°C，来杯热热的{brand}「{drink}」暖暖手吧~",
+    "冷冷的天气最适合一杯热{drink}了！去{brand}点一杯，{sugar}~",
+    "{temp}°C的天，手都冻僵了！赶紧来杯热乎乎的{brand}「{drink}」，{sugar}，暖到心里~",
+    "{city}才{temp}°C，好冷！一杯热{brand}「{drink}」是今天的小确幸，{sugar}~",
+  ]
+};
+
+const SUGAR_OPTIONS = [
+  { level: '三分糖', reason: '微甜刚好，喝完无负罪感' },
+  { level: '五分糖', reason: '甜度适中，奶茶标配' },
+  { level: '七分糖', reason: '今天值得甜一点！' },
+  { level: '全糖', reason: '快乐加倍，糖分就是正义' },
+  { level: '无糖', reason: '原汁原味，品茶本味' },
+];
+
+const ICE_OPTIONS_HOT = ['去冰', '少冰', '正常冰', '多冰'];
+const ICE_OPTIONS_WARM = ['少冰', '去冰', '正常冰', '常温'];
+const ICE_OPTIONS_COLD = ['热饮', '温热', '去冰'];
+
+let wheelUserCity = localStorage.getItem('milkTeaCity') || '';
+let wheelWeatherCache = null;
+let wheelIsSpinning = false;
+let wheelCurrentRotation = 0;
+
+function openWheel() {
+  const overlay = document.getElementById('wheelOverlay');
+  overlay.classList.add('open');
+  renderWheelDisc();
+  renderWheelCity();
+  document.getElementById('wheelResultArea').innerHTML = '';
+  if (wheelUserCity && !wheelWeatherCache) {
+    loadWheelWeather(wheelUserCity);
+  } else if (wheelWeatherCache) {
+    renderWheelWeather(wheelWeatherCache);
+  }
+}
+
+function closeWheel() {
+  document.getElementById('wheelOverlay').classList.remove('open');
+}
+
+function renderWheelDisc() {
+  const disc = document.getElementById('wheelDisc');
+  const n = WHEEL_BRANDS_LIST.length;
+  const segAngle = 360 / n;
+
+  // Build conic-gradient
+  let stops = [];
+  for (let i = 0; i < n; i++) {
+    const color = WHEEL_BRAND_COLORS[i];
+    const start = (segAngle * i).toFixed(2);
+    const end = (segAngle * (i + 1)).toFixed(2);
+    stops.push(`${color} ${start}deg ${end}deg`);
+  }
+  disc.style.background = `conic-gradient(from ${-segAngle/2}deg, ${stops.join(', ')})`;
+
+  // Add brand labels
+  let labelsHTML = '';
+  for (let i = 0; i < n; i++) {
+    const angle = segAngle * i;
+    // Shorten long brand names
+    let label = WHEEL_BRANDS_LIST[i];
+    if (label.length > 4) label = label.substring(0, 4) + '..';
+    labelsHTML += `<div class="wheel-segment-label" style="transform: rotate(${angle}deg) translateX(28px);">${label}</div>`;
+  }
+  disc.innerHTML = labelsHTML;
+}
+
+function renderWheelCity() {
+  const section = document.getElementById('wheelCitySection');
+  if (wheelUserCity) {
+    section.innerHTML = `
+      <span class="wheel-city-tag" onclick="resetWheelCity()">
+        📍 ${wheelUserCity}
+        <span class="city-change">点击更换</span>
+      </span>
+    `;
+  } else {
+    section.innerHTML = `
+      <div class="wheel-city-input-wrap">
+        <input class="wheel-city-input" id="wheelCityInput" placeholder="你在哪个城市？"
+          onkeydown="if(event.key==='Enter')confirmWheelCity()" />
+        <button class="wheel-city-confirm" onclick="confirmWheelCity()">确定</button>
+      </div>
+    `;
+  }
+}
+
+function confirmWheelCity() {
+  const input = document.getElementById('wheelCityInput');
+  if (!input) return;
+  const city = input.value.trim();
+  if (!city) return;
+  wheelUserCity = city;
+  localStorage.setItem('milkTeaCity', city);
+  renderWheelCity();
+  loadWheelWeather(city);
+}
+
+function resetWheelCity() {
+  wheelUserCity = '';
+  wheelWeatherCache = null;
+  localStorage.removeItem('milkTeaCity');
+  document.getElementById('wheelWeatherArea').innerHTML = '';
+  renderWheelCity();
+}
+
+async function loadWheelWeather(city) {
+  const area = document.getElementById('wheelWeatherArea');
+  area.innerHTML = '<div class="wheel-loading">🌤️ 正在获取天气...</div>';
+  try {
+    const res = await fetch(`https://wttr.in/${encodeURIComponent(city)}?format=j1`);
+    const data = await res.json();
+    wheelWeatherCache = {
+      temp: parseInt(data.current_condition[0].temp_C),
+      desc: (data.current_condition[0].lang_zh && data.current_condition[0].lang_zh[0] && data.current_condition[0].lang_zh[0].value)
+        || data.current_condition[0].weatherDesc[0].value,
+      humidity: parseInt(data.current_condition[0].humidity)
+    };
+    renderWheelWeather(wheelWeatherCache);
+  } catch(e) {
+    area.innerHTML = '<div class="wheel-loading">天气获取失败，不影响转盘哦~</div>';
+    wheelWeatherCache = null;
+  }
+}
+
+function renderWheelWeather(w) {
+  const area = document.getElementById('wheelWeatherArea');
+  area.innerHTML = `
+    <div class="wheel-weather-badge">
+      🌡️ <span class="weather-temp">${w.temp}°C</span>
+      &nbsp;${w.desc}&nbsp;
+      💧 ${w.humidity}%
+    </div>
+  `;
+}
+
+function spinWheel() {
+  if (wheelIsSpinning) return;
+  wheelIsSpinning = true;
+
+  const disc = document.getElementById('wheelDisc');
+  const btn = document.getElementById('wheelSpinBtn');
+  btn.disabled = true;
+  document.getElementById('wheelResultArea').innerHTML = '';
+
+  // Random angle: 5 full spins + random stop
+  const randomAngle = Math.random() * 360;
+  const totalRotation = wheelCurrentRotation + (360 * 5) + randomAngle;
+
+  disc.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+  disc.style.transform = `rotate(${totalRotation}deg)`;
+
+  wheelCurrentRotation = totalRotation;
+
+  // Wait for spin to finish
+  const onEnd = () => {
+    disc.removeEventListener('transitionend', onEnd);
+    wheelIsSpinning = false;
+    btn.disabled = false;
+
+    // Calculate which segment the pointer is at
+    // Pointer is at top (0 deg). The wheel rotated totalRotation degrees clockwise.
+    // The segment at top is at angle: (360 - (totalRotation % 360)) % 360
+    const n = WHEEL_BRANDS_LIST.length;
+    const segAngle = 360 / n;
+    const normalizedAngle = ((totalRotation % 360) + 360) % 360;
+    // The pointer is at the top. Since conic starts from -segAngle/2 (to center first segment at top),
+    // the segment index is:
+    const adjustedAngle = (normalizedAngle + segAngle / 2) % 360;
+    const segIndex = Math.floor(adjustedAngle / segAngle) % n;
+    // The wheel spins clockwise, so the segment that ends up at top is the one at the "reverse" position
+    const brandIndex = (n - segIndex) % n;
+
+    showWheelResult(WHEEL_BRANDS_LIST[brandIndex]);
+  };
+  disc.addEventListener('transitionend', onEnd);
+}
+
+function showWheelResult(brand) {
+  const drinks = BRAND_DRINKS[brand] || ['招牌奶茶'];
+  const drink = drinks[Math.floor(Math.random() * drinks.length)];
+
+  const sugar = SUGAR_OPTIONS[Math.floor(Math.random() * SUGAR_OPTIONS.length)];
+
+  let weatherType = 'warm';
+  let iceOption = '少冰';
+  let temp = '';
+  let city = wheelUserCity || '';
+
+  if (wheelWeatherCache) {
+    temp = wheelWeatherCache.temp;
+    if (temp > 28) {
+      weatherType = 'hot';
+      iceOption = ICE_OPTIONS_HOT[Math.floor(Math.random() * ICE_OPTIONS_HOT.length)];
+    } else if (temp < 15) {
+      weatherType = 'cold';
+      iceOption = ICE_OPTIONS_COLD[Math.floor(Math.random() * ICE_OPTIONS_COLD.length)];
+    } else {
+      weatherType = 'warm';
+      iceOption = ICE_OPTIONS_WARM[Math.floor(Math.random() * ICE_OPTIONS_WARM.length)];
+    }
+  } else {
+    iceOption = ['少冰', '正常冰', '去冰'][Math.floor(Math.random() * 3)];
+    temp = '??';
+  }
+
+  // Pick a template
+  const templates = WEATHER_TEMPLATES[weatherType];
+  let msg = templates[Math.floor(Math.random() * templates.length)];
+  msg = msg.replace('{temp}', temp)
+    .replace('{brand}', brand)
+    .replace('{drink}', drink)
+    .replace('{ice}', iceOption)
+    .replace('{sugar}', sugar.level)
+    .replace('{city}', city);
+
+  // Humidity tip
+  let humidityTip = '';
+  if (wheelWeatherCache && wheelWeatherCache.humidity > 70) {
+    humidityTip = '湿度较高，推荐清爽口味~';
+  }
+
+  const area = document.getElementById('wheelResultArea');
+  area.innerHTML = `
+    <div class="wheel-result">
+      <div class="wheel-result-brand">${brand}</div>
+      <div class="wheel-result-drink">${drink}</div>
+      <div class="wheel-result-tags">
+        <span class="wheel-result-tag">🧊 ${iceOption}</span>
+        <span class="wheel-result-tag">🍬 ${sugar.level}（${sugar.reason}）</span>
+        ${humidityTip ? `<span class="wheel-result-tag">💧 ${humidityTip}</span>` : ''}
+      </div>
+      <div class="wheel-result-msg">${msg}</div>
+      <button class="wheel-again-btn" onclick="spinWheel()">🎡 再转一次</button>
+    </div>
+  `;
 }
 
 // ============ START ============
